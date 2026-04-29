@@ -1,0 +1,49 @@
+Role: Senior Systems Architect. I need to resolve state-management bugs and implement advanced "Health-Network" features to prevent system abuse and improve efficiency.
+
+1. Fix The "Ghost QR" & Appointment Logic:
+
+QR Generation: The QR code for the TransactionToken is failing to render. Install qrcode.react and ensure that once a donor selects a time-slot, a unique tokenID is saved to the Appointments collection. The QRToken component must then fetch this specific tokenID to render the code.
+
+Double-Accept Prevention: Once a donor clicks "Accept" for a specific AppealID, change that alert card's button to "View Appointment" and disable the "Accept" function. Use a Firebase check: if (userHasAcceptedAppeal) { disableButtons() }.
+
+2. Cross-Hospital Inventory Sharing (The Standout Feature):
+
+Global Inventory View: Add a "Network Blood Stock" tab for Hospitals.
+
+The Sharing Logic: If Hospital A is low on 'O-', they should see that Hospital B has 10 units. Add a "Request Unit Transfer" button.
+
+Transfer Workflow: This sends a notification to Hospital B. If they approve, the units are deducted from B and added to A. This demonstrates a decentralized healthcare network.
+
+3. Cancellation & Auto-Sourcing System:
+
+The "Replacement" Trigger: If a donor clicks "Cancel Appointment," the system must:
+
+Re-open the slot for that hospital.
+
+Automatically "Re-ping" the next 5 closest matching donors in that 10km radius with a "High Urgency: Slot Just Opened" alert.
+
+4. Advanced Security & Geofencing:
+
+Fraud Protection: Add an "Admin Verification" flag to Hospital accounts. Hospitals cannot post appeals until isVerified: true.
+
+Dynamic Geofencing: Ensure the notification logic uses the Haversine Formula on the backend (Cloud Functions or a helper utility) so that a donor in Mombasa never receives a Nairobi alert.
+
+5. Donor "One-ID" System:
+
+Create a DigitalDonorCard component. This is a permanent QR code on the donor's profile that, when scanned by any hospital in the VitalMatch network, instantly pulls up their:
+
+Verified Blood Type
+
+Eligibility Status (Last donation date check)
+
+Identification Details.
+
+This removes the need for repeated manual entry at different hospitals.
+
+6. Implementation Strategy:
+
+Update the App.jsx to handle these new "Transfer" and "Check-in" states.
+
+Use Lucide-React icons for the new "Transfer" and "Hospital Network" tabs.
+
+Ensure the UI stays in the Medical Red/White theme.

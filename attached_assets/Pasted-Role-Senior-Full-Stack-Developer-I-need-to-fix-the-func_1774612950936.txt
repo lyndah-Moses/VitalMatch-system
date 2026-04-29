@@ -1,0 +1,43 @@
+Role: Senior Full-Stack Developer. I need to fix the functional logic of VitalMatch and activate the missing Donor features.
+
+1. Fix Global State (The "Blood Type Unknown" Error):
+
+The UserContext or Auth state is not correctly passing the bloodType from the signup form to the dashboard.
+
+Fix: Ensure that during signup, the bloodType is saved to the Firestore users collection. On the Dashboard, fetch the current user's document and display the bloodType and location at the top. If it's missing, show a "Complete Profile" button.
+
+2. Upgrade the "Accept Appeal" Workflow:
+
+When a donor clicks "Accept", do NOT just show a success message. Instead, open a "Booking & Eligibility Modal".
+
+Step A: Eligibility Checklist: Ask 3 quick questions: 1. Weight > 50kg? 2. Any illness in last 48hrs? 3. Last donation > 56 days ago?
+
+Step B: Appointment Scheduling: If eligible, show a date/time picker with available slots (mock these for now).
+
+Step C: Confirmation: Once booked, generate the QR Token and show a "Get Directions" button linked to Google Maps using the hospital's coordinates.
+
+3. Implement the "Live Status Tracker" (The Journey):
+
+Replace the static "Accepted Successfully" message with a Vertical Progress Stepper.
+
+Stages: Accepted -> Scheduled -> Arrived (Verified) -> Donated -> Completed.
+
+Connect this to the Transaction collection in the database so the status updates in real-time when the hospital "verifies" the donor.
+
+4. Activate Donor Dashboard Features:
+
+Donation Cooldown Tracker: Create a logic that checks the lastDonationDate in the user's profile. Calculate the difference from today. If < 56 days, show a countdown circle: "You can save another life in X days."
+
+Donation History: Create a "History" tab that queries the Transactions collection where status == 'completed'. List the Hospital name, date, and blood type donated.
+
+Smart Reminders: Add a "Reminders" section on the dashboard that shows: "Don't forget to eat before your 2 PM appointment" and "Carry your National ID."
+
+5. Navigation & Logistics:
+
+Next to the hospital address in the alert card, add: "Estimated Travel Time: [X] mins" (Calculate this based on the distance).
+
+Add a "Contact Hospital" button that pulls the phone/email from the Hospital profile.
+
+6. Technical Requirement:
+
+Ensure all these updates are saved to Firebase so that if I refresh the page, my "Scheduled" appointment and "QR Token" are still visible.

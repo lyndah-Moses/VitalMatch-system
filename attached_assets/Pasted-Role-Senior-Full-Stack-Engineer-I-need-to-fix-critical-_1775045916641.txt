@@ -1,0 +1,46 @@
+Role: Senior Full-Stack Engineer. I need to fix critical state bugs and implement the "Hospital Management Information System" (HMIS) features.
+
+1. Critical Fixes (Donor Side):
+
+AI Chatbot Repair: The Gemini API call is currently failing or not connected to the UI. Fix the handleSendMessage function. Ensure the API key is read from .env and the bot uses the system prompt: "You are the VitalMatch Assistant. Follow Kenya National Blood Transfusion guidelines (6-month tattoo/malaria deferral)."
+
+Data Consistency: Ensure the Leaderboard and Profile fetch data from the same Firestore document. Fix the useEffect hook so bloodType and donationCount update globally across the app when a donation is marked 'Completed'.
+
+2. Hospital Dashboard – Navigation & UI:
+
+Add a persistent Sidebar with a "Sign Out" button at the bottom.
+
+Implement Role-Based Access (RBAC): Create a toggle or attribute for Hospital staff: Admin (Full access), Nurse (Check-in/Donation marks), Reception (Appointments only).
+
+3. The "Smart" Hospital Features (The Gold Features):
+
+Donor Matching & Bulk Notifications: Create a "Donor Discovery" tab. Filter users by bloodType and distance < 10km. Add a "Select All" checkbox and a "Send Bulk Emergency Alert" button that creates a prioritized notification for all selected donors.
+
+Emergency Broadcast Mode: Add a large "🚨 EMERGENCY MODE" toggle. When ON, all hospital appeals are styled in Pulsing Red and pinned to the top of all nearby donor feeds.
+
+Blood Inventory Tracking: Create an Inventory collection. Show a visual "Stock Level" chart (Progress bars). If a blood type falls below 5 units, trigger an Auto-Request Suggestion popup.
+
+4. Check-in & Appointment Management:
+
+Appointment Panel: List all donors who clicked 'Accept'. Allow the hospital to click "Approve Time" or "Reschedule".
+
+The Check-in Flow: Implement two critical buttons for each donor entry:
+
+"Mark as Arrived" (Updates status to 'Arrived').
+
+"Mark as Completed" (This MUST increment the donor's donationCount and update the lastDonationDate to today's date).
+
+5. Analytics & Visuals (The "Polished" Look):
+
+Live Dashboard: Use a simple library (like recharts or basic CSS bars) to show: Total Donations this month vs. Active Appeals.
+
+Donor Management: Create a list view of all donors who have ever visited. Label them as "Frequent Donor" if donations > 3.
+
+6. Hospital Verification:
+
+Display a "Verified Hospital" badge next to the hospital name. Fetch location and contactInfo from the hospitals collection and display them clearly on the profile.
+
+Important: What to do after the AI finishes
+Check the AI Chat: Type "Can I donate if I have a tattoo?" If it doesn't answer, tell Replit: "The API call is still not returning a string, check the JSON parsing in the Gemini service."
+
+Test the "Completed" Button: Log in as a Hospital. Find a donor and click "Mark as Completed." Then log in as that Donor. Check if your "Days until next donation" changed to 56. 3.  The "Sign Out" Problem: If you still can't find the sign-out button, it's likely hidden behind a CSS layer. Tell the AI: "Make the sidebar z-index higher so the Sign Out button is clickable."

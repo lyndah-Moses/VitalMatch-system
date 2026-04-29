@@ -1,0 +1,94 @@
+Role: Act as a Senior Full-Stack Engineer and UI/UX Designer specialized in Health-Tech. Build a robust, fully functional web application called VitalMatch, optimized for a student to demonstrate as a Final Year Project.
+
+Project Vision: Create a secure, real-time, geospatial platform to connect verified hospitals in Kenya with voluntary blood donors, significantly reducing emergency response times and eliminating fraudulent appeals.
+
+1. Design Aesthetic & Branding
+
+Brand Name: VitalMatch
+
+Motto: "Connecting Life in Real-Time"
+
+Visual Theme: A high-end, clean, professional medical interface.
+
+Palette:
+
+Primary: Medical Red (#D32F2F) for urgency and branding.
+
+Secondary: Pure White (#FFFFFF) for clarity.
+
+Accent: Soft Grey (#F5F5F5) for backgrounds and Healthy Green (#388E3C) for success/verification states.
+
+Typography: Modern, clean, and highly legible (e.g., Roboto or Inter). Use "Card-Based" layouts with smooth shadows.
+
+2. User Flows & Detailed Dashboard Designs
+
+Common Elements:
+Secure Portal Access: A single login page with Role-Based Access Control (RBAC).
+
+MFA (Multi-Factor Authentication): For security, require an Email/SMS OTP code during login, especially for Hospital accounts.
+
+A. Hospital Dashboard (The "Control Center")
+UX Goal: Efficiency, clarity, and rapid decision-making under stress.
+
+Layout: A fixed left navigation sidebar with a central work area.
+
+Design Elements:
+
+Header: Welcome message, hospital name, and a prominent "SOS" status indicator.
+
+Primary Action: A massive, red floating action button (FAB) that says "CREATE EMERGENCY APPEAL." Clicking this opens a modal to select Blood Type, Quantity, and Emergency Level (Critical/Urgent/Standard).
+
+"Active Appeals" Section: A list of open requests showing the percentage of matched donors who have accepted.
+
+"Live Donor Map": An embedded map (using Leaflet.js/OpenStreetMap) showing real-time locations of available donors (clustered by blood group) within a 10km radius of the hospital.
+
+"Verification Portal": A dedicated tab with a built-in QR Code Scanner (or manual ID input) to verify a donor's unique token upon their arrival.
+
+"Reports & Analytics": A tab to generate summaries of donations managed, donor response times, and an option to Export as PDF/CSV.
+
+B. Donor Dashboard (The "Life Saver Portal")
+UX Goal: Empowerment, transparency, and engagement (Gamification).
+
+Layout: Top navigation bar with a mobile-responsive, simple card layout below.
+
+Design Elements:
+
+Welcome Card: "Hello, [Name]. You are eligible to save a life today."
+
+"Health Passport" Card: Displays Blood Type, Last Donation Date, and a 56-day countdown timer for their next eligibility.
+
+"Emergency Alerts" Section: A dedicated area that highlights nearby, authenticated "Distress Calls" with an option to "Accept" or "Decline."
+
+"Impact Tracker" Card: A gamified section showing total lives saved, "Achievement Badges" (e.g., "Silver Donor," "Emergency Responder"), and their current status on a community leaderboard.
+
+"Transparency Feed": A secure tracker for accepted donations: "Session Confirmed," "Blood Collected," "Screened," "Transfused."
+
+"AICheck eligibility Assistant": A persistent floating button that opens the AI chatbot.
+
+3. Advanced AI Integration (Gemini SDK)
+
+Feature: AICheck Eligibility Assistant.
+
+Role: Use the Google Gemini API to build an advanced, context-aware chatbot.
+
+Knowledge Base: Prioritize the Kenya National Standards for Blood Transfusion Services.
+
+Functions: Answer common donor questions about deferral periods for tattoos (6 months), malaria (6-month deferral), medication (48-hour wait), and other health conditions before they are allowed to accept an emergency request.
+
+4. Real-Time Logic & Geofencing (The "Brain")
+
+Database: PostgreSQL.
+
+Matching Algorithm: When a hospital posts an appeal, the system must perform a real-time spatial query using Leaflet.js and the user's last known GPS coordinates to identify and notify only the matching blood types located within a 10km geofenced radius of the hospital.
+
+5. Security & Verification Handshake
+
+Verification: When a donor accepts a request, generate a unique, time-sensitive digital token (QR Code) with their User ID, Hospital ID, and Timestamp. This token is required for the "verification handshake" at the hospital, effectively mitigating identity fraud.
+
+Technical Stack Instructions:
+
+Frontend: React, Tailwind CSS (for an ultra-lightweight, responsive UI).
+
+Backend: Node.js/Express.
+
+Deployment: Deploy as a live, functional website immediately to show progress.

@@ -1,0 +1,1271 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: VitalMatch API - Connecting hospitals with blood donors in Kenya
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: auth
+    description: Authentication and user management
+  - name: hospitals
+    description: Hospital operations
+  - name: donors
+    description: Donor operations
+  - name: appeals
+    description: Emergency blood appeal operations
+  - name: donations
+    description: Donation tracking operations
+  - name: gemini
+    description: Gemini AI chat and image operations
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginBody"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/register/donor:
+    post:
+      operationId: registerDonor
+      tags: [auth]
+      summary: Register a new donor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterDonorBody"
+      responses:
+        "201":
+          description: Donor registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/register/hospital:
+    post:
+      operationId: registerHospital
+      tags: [auth]
+      summary: Register a new hospital
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterHospitalBody"
+      responses:
+        "201":
+          description: Hospital registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/me:
+    get:
+      operationId: getCurrentUser
+      tags: [auth]
+      summary: Get current user profile
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout current user
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /hospitals/me:
+    get:
+      operationId: getMyHospital
+      tags: [hospitals]
+      summary: Get current hospital profile
+      responses:
+        "200":
+          description: Hospital profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Hospital"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    patch:
+      operationId: updateMyHospital
+      tags: [hospitals]
+      summary: Update hospital profile and location
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateHospitalBody"
+      responses:
+        "200":
+          description: Updated hospital
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Hospital"
+
+  /hospitals/me/appeals:
+    get:
+      operationId: getMyHospitalAppeals
+      tags: [hospitals]
+      summary: Get all appeals for this hospital
+      responses:
+        "200":
+          description: List of appeals
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Appeal"
+
+  /hospitals/me/donors-map:
+    get:
+      operationId: getDonorsNearHospital
+      tags: [hospitals]
+      summary: Get available donors within 10km radius
+      responses:
+        "200":
+          description: Nearby donors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DonorMapPoint"
+
+  /hospitals/me/stats:
+    get:
+      operationId: getHospitalStats
+      tags: [hospitals]
+      summary: Get hospital donation statistics
+      responses:
+        "200":
+          description: Statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HospitalStats"
+
+  /hospitals/me/verify-donor:
+    post:
+      operationId: verifyDonorToken
+      tags: [hospitals]
+      summary: Verify donor QR code token at hospital
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyTokenBody"
+      responses:
+        "200":
+          description: Token verified
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerifyTokenResponse"
+        "400":
+          description: Invalid or expired token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /appeals:
+    post:
+      operationId: createAppeal
+      tags: [appeals]
+      summary: Create a new emergency blood appeal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAppealBody"
+      responses:
+        "201":
+          description: Appeal created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Appeal"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /appeals/nearby:
+    get:
+      operationId: getNearbyAppeals
+      tags: [appeals]
+      summary: Get active appeals near donor location
+      responses:
+        "200":
+          description: Nearby appeals
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AppealWithHospital"
+
+  /appeals/{id}:
+    get:
+      operationId: getAppeal
+      tags: [appeals]
+      summary: Get appeal details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Appeal details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppealWithHospital"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    patch:
+      operationId: updateAppealStatus
+      tags: [appeals]
+      summary: Update appeal status (hospital only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAppealStatusBody"
+      responses:
+        "200":
+          description: Updated appeal
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Appeal"
+
+  /appeals/{id}/respond:
+    post:
+      operationId: respondToAppeal
+      tags: [appeals]
+      summary: Accept or decline an appeal (donor only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RespondToAppealBody"
+      responses:
+        "200":
+          description: Response recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppealResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /donors/me:
+    get:
+      operationId: getMyDonorProfile
+      tags: [donors]
+      summary: Get current donor profile
+      responses:
+        "200":
+          description: Donor profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DonorProfile"
+    patch:
+      operationId: updateMyDonorProfile
+      tags: [donors]
+      summary: Update donor profile and location
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateDonorBody"
+      responses:
+        "200":
+          description: Updated donor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DonorProfile"
+
+  /donors/me/donations:
+    get:
+      operationId: getMyDonations
+      tags: [donors]
+      summary: Get donor's donation history
+      responses:
+        "200":
+          description: Donation history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DonationRecord"
+
+  /donors/me/token:
+    get:
+      operationId: getDonorToken
+      tags: [donors]
+      summary: Get or generate QR token for accepted appeal
+      responses:
+        "200":
+          description: Token data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DonorToken"
+        "404":
+          description: No active accepted appeal
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /donors/me/leaderboard:
+    get:
+      operationId: getLeaderboard
+      tags: [donors]
+      summary: Get donor leaderboard
+      responses:
+        "200":
+          description: Leaderboard data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LeaderboardEntry"
+
+  /donations/{id}/status:
+    patch:
+      operationId: updateDonationStatus
+      tags: [donations]
+      summary: Update donation tracking status (hospital only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateDonationStatusBody"
+      responses:
+        "200":
+          description: Updated donation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DonationRecord"
+
+  /gemini/conversations:
+    get:
+      operationId: listGeminiConversations
+      tags: [gemini]
+      summary: List all conversations
+      responses:
+        "200":
+          description: List of conversations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GeminiConversation"
+    post:
+      operationId: createGeminiConversation
+      tags: [gemini]
+      summary: Create a new conversation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateGeminiConversationBody"
+      responses:
+        "201":
+          description: Created conversation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GeminiConversation"
+  /gemini/conversations/{id}:
+    get:
+      operationId: getGeminiConversation
+      tags: [gemini]
+      summary: Get conversation with messages
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Conversation with messages
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GeminiConversationWithMessages"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GeminiError"
+    delete:
+      operationId: deleteGeminiConversation
+      tags: [gemini]
+      summary: Delete a conversation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GeminiError"
+  /gemini/conversations/{id}/messages:
+    get:
+      operationId: listGeminiMessages
+      tags: [gemini]
+      summary: List messages in a conversation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GeminiMessage"
+    post:
+      operationId: sendGeminiMessage
+      tags: [gemini]
+      summary: Send a message and receive an AI response (SSE stream)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendGeminiMessageBody"
+      responses:
+        "200":
+          description: SSE stream of assistant response chunks
+          content:
+            text/event-stream: {}
+  /gemini/generate-image:
+    post:
+      operationId: generateGeminiImage
+      tags: [gemini]
+      summary: Generate an image from a text prompt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateGeminiImageBody"
+      responses:
+        "200":
+          description: Generated image data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerateGeminiImageResponse"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+      required:
+        - success
+
+    LoginBody:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum: [donor, hospital]
+      required:
+        - email
+        - password
+        - role
+
+    LoginResponse:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        token:
+          type: string
+      required:
+        - user
+        - token
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        role:
+          type: string
+        name:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - email
+        - role
+        - name
+        - createdAt
+
+    RegisterDonorBody:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        bloodType:
+          type: string
+          enum: [A+, A-, B+, B-, AB+, AB-, O+, O-]
+        phone:
+          type: string
+        dateOfBirth:
+          type: string
+      required:
+        - name
+        - email
+        - password
+        - bloodType
+        - phone
+        - dateOfBirth
+
+    RegisterHospitalBody:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phone:
+          type: string
+        address:
+          type: string
+        county:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+      required:
+        - name
+        - email
+        - password
+        - phone
+        - address
+        - county
+        - latitude
+        - longitude
+
+    Hospital:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        address:
+          type: string
+        county:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        isVerified:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - userId
+        - name
+        - email
+        - phone
+        - address
+        - county
+        - latitude
+        - longitude
+        - isVerified
+        - createdAt
+
+    UpdateHospitalBody:
+      type: object
+      properties:
+        phone:
+          type: string
+        address:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+
+    HospitalStats:
+      type: object
+      properties:
+        totalAppeals:
+          type: integer
+        activeAppeals:
+          type: integer
+        totalDonationsReceived:
+          type: integer
+        avgResponseTimeMinutes:
+          type: number
+        bloodTypeBreakdown:
+          type: array
+          items:
+            $ref: "#/components/schemas/BloodTypeCount"
+      required:
+        - totalAppeals
+        - activeAppeals
+        - totalDonationsReceived
+        - avgResponseTimeMinutes
+        - bloodTypeBreakdown
+
+    BloodTypeCount:
+      type: object
+      properties:
+        bloodType:
+          type: string
+        count:
+          type: integer
+      required:
+        - bloodType
+        - count
+
+    DonorProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        bloodType:
+          type: string
+        dateOfBirth:
+          type: string
+        lastDonationDate:
+          type: ["string", "null"]
+          format: date-time
+        latitude:
+          type: ["number", "null"]
+        longitude:
+          type: ["number", "null"]
+        isEligible:
+          type: boolean
+        totalDonations:
+          type: integer
+        badges:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - userId
+        - name
+        - email
+        - phone
+        - bloodType
+        - dateOfBirth
+        - lastDonationDate
+        - latitude
+        - longitude
+        - isEligible
+        - totalDonations
+        - badges
+        - createdAt
+
+    UpdateDonorBody:
+      type: object
+      properties:
+        phone:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        lastDonationDate:
+          type: string
+
+    DonorMapPoint:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        bloodType:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        distanceKm:
+          type: number
+      required:
+        - id
+        - name
+        - bloodType
+        - latitude
+        - longitude
+        - distanceKm
+
+    Appeal:
+      type: object
+      properties:
+        id:
+          type: integer
+        hospitalId:
+          type: integer
+        bloodType:
+          type: string
+        quantity:
+          type: integer
+        emergencyLevel:
+          type: string
+          enum: [critical, urgent, standard]
+        status:
+          type: string
+          enum: [active, fulfilled, cancelled]
+        description:
+          type: ["string", "null"]
+        acceptedCount:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: ["string", "null"]
+          format: date-time
+      required:
+        - id
+        - hospitalId
+        - bloodType
+        - quantity
+        - emergencyLevel
+        - status
+        - description
+        - acceptedCount
+        - createdAt
+        - expiresAt
+
+    AppealWithHospital:
+      type: object
+      properties:
+        id:
+          type: integer
+        hospitalId:
+          type: integer
+        hospitalName:
+          type: string
+        hospitalAddress:
+          type: string
+        hospitalLatitude:
+          type: number
+        hospitalLongitude:
+          type: number
+        bloodType:
+          type: string
+        quantity:
+          type: integer
+        emergencyLevel:
+          type: string
+          enum: [critical, urgent, standard]
+        status:
+          type: string
+          enum: [active, fulfilled, cancelled]
+        description:
+          type: ["string", "null"]
+        acceptedCount:
+          type: integer
+        distanceKm:
+          type: ["number", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: ["string", "null"]
+          format: date-time
+      required:
+        - id
+        - hospitalId
+        - hospitalName
+        - hospitalAddress
+        - hospitalLatitude
+        - hospitalLongitude
+        - bloodType
+        - quantity
+        - emergencyLevel
+        - status
+        - description
+        - acceptedCount
+        - distanceKm
+        - createdAt
+        - expiresAt
+
+    CreateAppealBody:
+      type: object
+      properties:
+        bloodType:
+          type: string
+          enum: [A+, A-, B+, B-, AB+, AB-, O+, O-]
+        quantity:
+          type: integer
+        emergencyLevel:
+          type: string
+          enum: [critical, urgent, standard]
+        description:
+          type: string
+      required:
+        - bloodType
+        - quantity
+        - emergencyLevel
+
+    UpdateAppealStatusBody:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [active, fulfilled, cancelled]
+      required:
+        - status
+
+    RespondToAppealBody:
+      type: object
+      properties:
+        action:
+          type: string
+          enum: [accept, decline]
+      required:
+        - action
+
+    AppealResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        appealId:
+          type: integer
+        donorId:
+          type: integer
+        action:
+          type: string
+        token:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - appealId
+        - donorId
+        - action
+        - token
+        - createdAt
+
+    DonorToken:
+      type: object
+      properties:
+        token:
+          type: string
+        donorId:
+          type: integer
+        hospitalId:
+          type: integer
+        appealId:
+          type: integer
+        expiresAt:
+          type: string
+          format: date-time
+        qrData:
+          type: string
+      required:
+        - token
+        - donorId
+        - hospitalId
+        - appealId
+        - expiresAt
+        - qrData
+
+    VerifyTokenBody:
+      type: object
+      properties:
+        token:
+          type: string
+      required:
+        - token
+
+    VerifyTokenResponse:
+      type: object
+      properties:
+        valid:
+          type: boolean
+        donor:
+          $ref: "#/components/schemas/DonorProfile"
+        appeal:
+          $ref: "#/components/schemas/Appeal"
+        donationId:
+          type: integer
+      required:
+        - valid
+        - donor
+        - appeal
+        - donationId
+
+    DonationRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+        donorId:
+          type: integer
+        hospitalId:
+          type: integer
+        hospitalName:
+          type: string
+        appealId:
+          type: integer
+        bloodType:
+          type: string
+        status:
+          type: string
+          enum: [confirmed, collected, screened, transfused]
+        donatedAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - donorId
+        - hospitalId
+        - hospitalName
+        - appealId
+        - bloodType
+        - status
+        - donatedAt
+        - updatedAt
+
+    UpdateDonationStatusBody:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [confirmed, collected, screened, transfused]
+      required:
+        - status
+
+    LeaderboardEntry:
+      type: object
+      properties:
+        rank:
+          type: integer
+        donorId:
+          type: integer
+        name:
+          type: string
+        bloodType:
+          type: string
+        totalDonations:
+          type: integer
+        badges:
+          type: array
+          items:
+            type: string
+      required:
+        - rank
+        - donorId
+        - name
+        - bloodType
+        - totalDonations
+        - badges
+
+    GeminiConversation:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - title
+        - createdAt
+
+    GeminiMessage:
+      type: object
+      properties:
+        id:
+          type: integer
+        conversationId:
+          type: integer
+        role:
+          type: string
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - conversationId
+        - role
+        - content
+        - createdAt
+
+    CreateGeminiConversationBody:
+      type: object
+      properties:
+        title:
+          type: string
+      required:
+        - title
+
+    SendGeminiMessageBody:
+      type: object
+      properties:
+        content:
+          type: string
+      required:
+        - content
+
+    GeminiConversationWithMessages:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/GeminiMessage"
+      required:
+        - id
+        - title
+        - createdAt
+        - messages
+
+    GenerateGeminiImageBody:
+      type: object
+      properties:
+        prompt:
+          type: string
+      required:
+        - prompt
+
+    GenerateGeminiImageResponse:
+      type: object
+      properties:
+        b64_json:
+          type: string
+        mimeType:
+          type: string
+      required:
+        - b64_json
+        - mimeType
+
+    GeminiError:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error

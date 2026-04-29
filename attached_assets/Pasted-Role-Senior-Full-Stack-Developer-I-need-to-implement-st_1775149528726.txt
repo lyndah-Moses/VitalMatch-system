@@ -1,0 +1,37 @@
+Role: Senior Full-Stack Developer. I need to implement strict business logic and UI improvements for the Donor Dashboard to ensure system integrity and a professional user experience.
+
+1. "Decline" & "Accept" Interaction Logic:
+
+Decline Action: When a donor clicks "Decline" on an alert card, that specific alert must be removed from their view immediately for the current session.
+
+Accept Action (The Lock): Once a donor clicks "Accept" and confirms an appointment, they must be locked from accepting any other requests.
+
+UI Change: Hide the "Available Alerts" list entirely and replace it with a single "Active Journey" card.
+
+Database Check: If activeAppointment == true in the User's Firestore document, disable all other "Accept" buttons across the site.
+
+2. 56-Day Eligibility Timer Repair:
+
+Logic: Pull the lastDonationDate from the current User’s profile.
+
+Calculation: If (Today's Date - lastDonationDate) < 56 days, show a countdown: "Eligible to save a life in [X] days." * State: If the gap is more than 56 days or the field is empty, display: "Status: Eligible to Save a Life" in a green badge. Ensure this updates automatically after a hospital marks a donation as "Completed."
+
+3. Embedded Map & Navigation (No Redirects):
+
+Leaflet.js Integration: Ensure the map stays inside the dashboard component. Do NOT redirect to a new Chrome tab for Google Maps.
+
+Live Route: When an appointment is active, use Leaflet to draw a Polyline (route line) from the Donor's coordinates to the Hospital's coordinates.
+
+Travel Info: Display the "Estimated Travel Time" and "Distance (km)" directly under the embedded map.
+
+4. Blood Type & Profile Sync:
+
+Fix the "Blood Type Unknown" bug at the top of the dashboard. Ensure the component fetches the bloodType from the users collection in Firestore immediately upon login.
+
+5. Design Standards:
+
+Maintain the Medical Red (#D32F2F) and White theme.
+
+Use Lucide-React icons for the "Route," "Timer," and "Alert" sections.
+
+Ensure all success/error messages (e.g., "Appointment Confirmed") appear as clean "Toast" notifications or professional Modals, not basic browser alerts.
